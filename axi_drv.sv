@@ -1,6 +1,7 @@
 class axi_drv extends uvm_driver#(axi_tx);
   `uvm_component_utils(axi_drv)
   `NEW_COMP
+  axi_tx local_tx;
   virtual axi_intf.master_mp vif;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
@@ -11,26 +12,42 @@ class axi_drv extends uvm_driver#(axi_tx);
   task run_phase(uvm_phase phase);
     forever begin
       seq_item_port.get_next_item(req);
-      drive(req);
-      req.print();
+      $cast(local_tx,req.clone());
+      //       fork
+      drive(local_tx);
+//       req.print();
+      //       join_none
       seq_item_port.item_done;
+      #100;
     end
   endtask
 
   task drive(axi_tx tx);
     `uvm_info("driving","driving the transaction",UVM_DEBUG)
     if(tx.wr_rd==WRITE) begin
-      write_address(tx);
-      write_data(tx);
+//       fork
+        write_address(tx);
+//               fork
+        write_data(tx);
+//       join_none
       write_response(tx);
+//             join_none
     end
     else if(tx.wr_rd==READ) begin
-      read_address(tx);
-      read_data(tx);
+      fork
+        read_address(tx);
+        read_data(tx);
+      join_none
+      repeat((tx.len+1)*(2**tx.burst_size)) @(vif.master_cb);
+      repeat(2) @(vif.master_cb);
+      
+//       wait(vif.master_cb.rlast);
+//       $display($time);
     end
   endtask
 
   task write_address(axi_tx tx);
+
     @(vif.master_cb);
     vif.master_cb.awaddr<=tx.addr;
     vif.master_cb.awid<=tx.id;
@@ -54,12 +71,11 @@ class axi_drv extends uvm_driver#(axi_tx);
     vif.master_cb.awcache<=0;
     vif.master_cb.awprot<=0;
     vif.master_cb.awvalid<=0;
-
   endtask
 
   task read_address(axi_tx tx);
-    $display("read_address");
-   @(vif.master_cb);
+    //     $display("read_address");
+    @(vif.master_cb);
     vif.master_cb.araddr<=tx.addr;
     vif.master_cb.arid<=tx.id;
     vif.master_cb.arlen<=tx.len;
@@ -70,9 +86,8 @@ class axi_drv extends uvm_driver#(axi_tx);
     vif.master_cb.arprot<=tx.prot;
     vif.master_cb.arvalid<=1;
 
-//     wait(vif.master_cb.arready==1);
+    wait(vif.master_cb.arready==1);
 
-        @(posedge vif.master_cb);
     vif.master_cb.araddr<=0;
     vif.master_cb.arid<=0;
     vif.master_cb.arlen<=0;
@@ -88,10 +103,11 @@ class axi_drv extends uvm_driver#(axi_tx);
   task write_data(axi_tx tx);
     foreach(tx.data[i])
       begin
-        @(vif.master_cb)
+        @(vif.master_cb);
+        axi_common::smp.put(1);
         vif.master_cb.wdata<=tx.data[i];
         vif.master_cb.wvalid<=1;
-        vif.master_cb.wstrb<=tx.wstrb;
+        vif.master_cb.wstrb<=tx.wstrb[i];
         vif.master_cb.wid<=tx.id;
         if(i==tx.len)begin
           vif.master_cb.wlast<=1;
@@ -99,6 +115,7 @@ class axi_drv extends uvm_driver#(axi_tx);
         else
           vif.master_cb.wlast<=0;
         wait(vif.master_cb.wready);
+        axi_common::smp.get(1);
       end
     @(vif.master_cb)
     vif.master_cb.wdata<=0;
@@ -109,17 +126,23 @@ class axi_drv extends uvm_driver#(axi_tx);
   endtask
 
   task write_response(axi_tx tx);
+
     wait(vif.master_cb.bvalid);
     vif.master_cb.bready<=1;
     @(vif.master_cb);
     vif.master_cb.bready<=0;
-    
   endtask
-  
+
   task read_data(axi_tx tx);
-    @(vif.master_cb);
-    if(vif.master_cb.rvalid)
-      vif.master_cb.rready<=1;
+//     @(vif.master_cb);
+    wait(vif.master_cb.rvalid);
+    vif.master_cb.rready<=1;
+    if(vif.master_cb.rlast)
+      begin
+        @(vif.master_cb);
+        vif.master_cb.rready<=0;
+//          @(vif.master_cb);
+      end
   endtask
 endclass
 

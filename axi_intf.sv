@@ -86,7 +86,7 @@ interface axi_intf(input logic aclk,arst);
     input  rid;
     input  rdata;
     input  rvalid;
-    output  rready;
+    output rready;
     input  rlast;
     input rresp;
   endclocking
