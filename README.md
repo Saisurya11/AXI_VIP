@@ -1,52 +1,52 @@
-# AXI_VIP
 
-🚀 Scalable AXI Verification IP (VIP)
-Project Overview
 
-This project implements a highly scalable AXI Verification IP (VIP) in SystemVerilog, designed to thoroughly verify AXI master-slave transactions across multiple scenarios. The VIP is built with modularity, flexibility, and precision in mind, making it suitable for complex verification environments and professional-grade simulations.
+# 🚀 Scalable AXI Verification IP (VIP)
 
-It has been successfully verified on QuestaSim, handling multiple transactions efficiently. Optional verbose debugging allows detailed inspection of data and addresses, while default execution focuses on coverage collection and report summaries, ensuring both efficiency and clarity.
+## Project Overview
 
-Key Features
+This project implements a **highly scalable AXI Verification IP (VIP)** in **SystemVerilog**, designed to **thoroughly verify AXI master-slave transactions** across multiple scenarios. The VIP is built with **modularity, flexibility, and precision** in mind, making it suitable for complex verification environments and professional-grade simulations.
 
-Burst Types: Supports Fixed, Incremental (INCR), Wrap, and Shifting Strobe bursts.
+It has been **successfully verified on QuestaSim**, handling multiple transactions efficiently. Optional **verbose debugging** allows detailed inspection of **data and addresses**, while default execution focuses on **coverage collection and report summaries**, ensuring both efficiency and clarity.
 
-Shifting Strobe bursts are implemented to verify lane-wise data shifting, ensuring correct propagation and alignment across ports, which is crucial for realistic system-level verification.
 
-Transaction Flexibility: Handles multiple transaction types within a single simulation. The actual order of execution is determined by the simulator, and the VIP is capable of managing any sequence it produces, demonstrating robust and versatile transaction handling.
+## Key Features
 
-Scalability:
+* **Burst Types:** Supports **Fixed, Incremental (INCR), Wrap, and Shifting Strobe bursts**.
 
-Fully parameterizable port widths.
+  * **Shifting Strobe bursts** are implemented to **verify lane-wise data shifting**, ensuring correct propagation and alignment across ports, which is crucial for realistic system-level verification.
 
-Burst size is always less than or equal to port width, ensuring safe and accurate data transfers without overflow or misalignment.
+* **Transaction Flexibility:** Handles multiple transaction types within a single simulation. The **actual order of execution is determined by the simulator**, and the VIP is capable of managing any sequence it produces, demonstrating robust and versatile transaction handling.
 
-Data Integrity:
+* **Scalability:**
 
-Correct handling of endianness for all transactions, guaranteeing accurate storage and retrieval of multi-byte data.
+  * Fully **parameterizable port widths**.
+  * Burst size is always **less than or equal to port width**, ensuring safe and accurate data transfers without overflow or misalignment.
 
-Verification Mechanisms:
+* **Data Integrity:**
 
-Functional AXI slave model to simulate realistic responses.
+  * Correct handling of **endianness** for all transactions, guaranteeing accurate storage and retrieval of multi-byte data.
 
-Comprehensive assertions for protocol compliance and error detection.
+* **Verification Mechanisms:**
 
-Detailed functional coverage across burst types and transaction sequences.
+  * **Functional AXI slave model** to simulate realistic responses.
+  * Comprehensive **assertions** for protocol compliance and error detection.
+  * Detailed **functional coverage** across burst types and transaction sequences.
 
-Verbose Debugging:
+* **Verbose Debugging:**
 
-Optional mode prints transaction-level details (data and addresses) for detailed inspection.
+  * Optional mode prints **transaction-level details** (data and addresses) for detailed inspection.
+  * Default mode produces **clean coverage and summary reports** suitable for professional verification workflows.
 
-Default mode produces clean coverage and summary reports suitable for professional verification workflows.
 
-Test Scenarios
+## Test Scenarios
 
 The VIP has been exercised across multiple realistic verification scenarios:
 
-Mixed transaction sequences comprising Fixed, INCR, and Wrap bursts, demonstrating robust multi-transaction handling.
+* Mixed transaction sequences comprising Fixed, INCR, and Wrap bursts, demonstrating **robust multi-transaction handling**.
+* Fixed, Incremental, and Wrap bursts with **user-defined transaction counts**, verifying configurable transaction behavior.
+* Shifting Strobe bursts have been verified to ensure **lane-wise data shifting and correct alignment**.
 
-Fixed, Incremental, and Wrap bursts with user-defined transaction counts, verifying configurable transaction behavior.
+All scenarios have been **successfully simulated**, confirming the VIP’s **robustness, flexibility, and reliability**.
 
-Shifting Strobe bursts have been verified to ensure lane-wise data shifting and correct alignment.
 
-All scenarios have been successfully simulated, confirming the VIP’s robustness, flexibility, and reliability.
+Do you want me to do that next?
